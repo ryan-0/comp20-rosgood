@@ -23,7 +23,6 @@
   	.software {
 	width:128px;
 	height:240px; 
-	
 	background:url(software.png) -254px 0px;
 	background-repeat: no-repeat;}
 }
@@ -45,47 +44,57 @@
 	width:128px;
 	height:240px; 
 	background:url(software.png) -508px 0px;}
-  }
-
-@media only screen and (min-width: 700px) and (max-width:800px) 
+}
+@media only screen and (min-width: 700px) and (max-width:800px)
 {
   	.software {
-	width:130px;
-	height:245px; 
-	background:url(software.png) 0px 250px;}
-  }
-
+	width:128px;
+	height:240px; 
+	
+	background:url(software.png) 0px -240px;
+	background-repeat: no-repeat;}
+}
 @media only screen and (min-width: 600px) and (max-width:700px) 
 {
   	.software {
-	width:130px;
-	height:245px; 
-	background:url(software.png) 150px 250px;}
-  }
+	width:128px;
+	height:240px; 
+	background:url(software.png) -127px -240px;
+	background-repeat: no-repeat;}
+}
+
 
 @media only screen and (min-width: 500px) and (max-width:600px) 
 {
   	.software {
-	width:130px;
-	height:245px; 
-	background:url(software.png) 300px 250px;}
-  }
+	width:128px;
+	height:240px; 
+	background:url(software.png) -254px -240px;
+	background-repeat: no-repeat;}
+}
+
 
 @media only screen and (min-width: 400px) and (max-width:500px) 
 {
   	.software {
-	width:130px;
-	height:245px; 
-	background:url(software.png) 450px 250px;}
-  }
+	width:128px;
+	height:240px;
+	
+	background:url(software.png)  -381px -240px;
+	background-repeat: no-repeat;}
+}
 
-@media only screen and (max-width: 400px)
+@media only screen and (max-width:400px) 
 {
   	.software {
-	width:130px;
-	height:245px; 
-	background:url(software.png) 600px 250px;}
-  }
+	width:128px;
+	height:240px; 
+	background:url(software.png) -508px -240px;}
+}
+
+
+
+
 
 
 /*
