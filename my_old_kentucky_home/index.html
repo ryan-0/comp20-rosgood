@@ -14,25 +14,22 @@
 <div id="lyrics"></div>
 
 <script>
-	
 	var music_video = document.getElementById("music_video");
 	var lyrics = document.getElementById("lyrics");
 	
 	music_video.addEventListener("timeupdate", function() {
 		if (music_video.currentTime > 8 && music_video.currentTime < 35) {
-			lyrics.innerHTML = "<h3>Double Rainbow!</h3>";
+			lyrics.innerHTML = "<h2>The sun shines bright in My Old Kentucky Home,<br>Tis summer, the people are gay;<br> The corn-top's ripe and the meadow's in the bloom <br>While the birds make music all the day.</h3>";
 		}
-
 		if (music_video.currentTime > 35 && music_video.currentTime < 64) {
-			lyrics.innerHTML = "<h3>Double Rainbow!</h3>";
+			lyrics.innerHTML = "<h2>The young folks roll on the little cabin floor, <br>All merry, all happy and bright; <br>By 'n' by hard times comes a knocking at the door,<br>Then My Old Kentucky Home, good night!</h2>"
 		}
-
 		if (music_video.currentTime > 64 && music_video.currentTime < 90) {
-			lyrics.innerHTML = "<h3>Double Rainbow!</h3>";
+			lyrics.innerHTML = "<h2>Chorus<br><br>Weep no more my lady<br>Oh weep no more today;<br>We will sing one song<br>For My Old Kentucky Home <br>For My Old Kentucky Home, far away</h2>";
 		}
 	},false);
-
 </script>
 </body>
-</html>
+</html>	
+
 
