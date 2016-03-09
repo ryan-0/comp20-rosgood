@@ -1,7 +1,7 @@
 
 	request = new XMLHttpRequest();
 // Step 1: Make request
-	request.open("GET", "https://messagehub.herokuapp.com/messages.json", true);
+	request.open("GET", "data.json", true);
 // Step 2: Handle the response	
 	request.onreadystatechange = parse;
 // Step 3: Fire off the request
