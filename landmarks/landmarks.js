@@ -2,18 +2,7 @@ var x = document.getElementById("demo");
 
 lat,lon = 0;
 
-function getUserLocation() {
 
-	if ("geolocation" in navigator) {
-		navigator.geolocation.getCurrentPosition(function(){
-			lat = position.coords.latitude;
-			lon = position.coords.longitude;
-		});
-	} else{
-		// post an error message saying the geolocation is not supported. 
-	}
-
-}
 
 var request = new XMLHttpRequest();
 var my_info = "login=AMOS_HORN&lat="+lat+"&lng="+lon;
