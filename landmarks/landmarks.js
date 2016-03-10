@@ -1,6 +1,4 @@
-var x = document.getElementById("demo");
-
-lat,lon = 0;
+var lat,lon = 0;
 
 function getUserLocation() {
 
@@ -14,6 +12,47 @@ function getUserLocation() {
 	}
 
 }
+
+function show_map(){
+	var current_position = new google.maps.LatLng(lat,lon);
+	var map_options = {
+		zoom : 13,
+		center: current_position,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+
+	var map = new.google.maps.Map(document.getElementById("map"),map_options);
+}
+
+
+	/* 
+		this is how to create marker and open info windows
+
+
+				Create a marker:
+
+				var marker = new google.maps.Marker({
+					position: landmark,
+					title: "Faneuil Hall, Boston, MA"
+				});
+				marker.setMap(map);
+				
+				This is a global info window... :
+
+				var infowindow = new google.maps.InfoWindow();
+				
+				Open info window on click of marker:
+
+				google.maps.event.addListener(marker, 'click', function() {
+					infowindow.setContent(marker.title);
+					infowindow.open(map, marker);
+				});
+
+	*/
+}
+
+
+
 
 var request = new XMLHttpRequest();
 var my_info = "login=AMOS_HORN&lat="+lat+"&lng="+lon;
@@ -36,3 +75,13 @@ function PinsToMap () {
 };
 
 request.send(null); 
+
+
+
+
+function initMap() {
+	map = new google.maps.Map(document.getElementById('map'), {
+		center: {lat: -34.397, lng: 150.644},
+		zoom: 8
+	});
+}
