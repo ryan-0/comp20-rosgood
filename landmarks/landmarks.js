@@ -1,87 +1,56 @@
-var lat,lon = 0;
-
-function getUserLocation() {
-
-	if ("geolocation" in navigator) {
-		navigator.geolocation.getCurrentPosition(function(){
-			lat = position.coords.latitude;
-			lon = position.coords.longitude;
-		});
-	} else{
-		// post an error message saying the geolocation is not supported. 
-	}
-
-}
-
-function show_map(){
-	var current_position = new google.maps.LatLng(lat,lon);
-	var map_options = {
-		zoom : 13,
-		center: current_position,
-		mapTypeId: google.maps.MapTypeId.ROADMAP
-	};
-
-	var map = new.google.maps.Map(document.getElementById("map"),map_options);
-}
-
-
-	/* 
-		this is how to create marker and open info windows
-
-
-				Create a marker:
-
-				var marker = new google.maps.Marker({
-					position: landmark,
-					title: "Faneuil Hall, Boston, MA"
+var MyLat = 0;
+			var MyLon = 0;
+			var request = new XMLHttpRequest();
+			var my_location = new google.maps.LatLng(MyLat, MyLon);
+			var myOptions = {
+						zoom: 13, // The larger the zoom number, the bigger the zoom
+						center: my_location,
+						mapTypeId: google.maps.MapTypeId.ROADMAP
+					};
+			
+			var map;
+			var marker;
+			var infowindow = new google.maps.InfoWindow();
+			
+			function StartMap()
+			{
+				map = new google.maps.Map(document.getElementById("landmark_map"), myOptions);
+				RetrieveMyLocation();
+			}
+			
+			function RetrieveMyLocation() {
+				if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+					navigator.geolocation.getCurrentPosition(function(position) {
+						MyLat = position.coords.latitude;
+						MyLon = position.coords.longitude;
+						DisplayMap();
+					});
+				}
+				else {
+					//write message about no geolocation possible
+				}
+			}
+			function DisplayMap()
+			{
+				my_location = new google.maps.LatLng(MyLat, MyLon);
+				
+				// Update map and go there...
+				map.panTo(my_location);
+	
+				// Create a marker
+				marker = new google.maps.Marker({
+					position: my_location,
+					title: "You Found me!"
 				});
 				marker.setMap(map);
-				
-				This is a global info window... :
-
-				var infowindow = new google.maps.InfoWindow();
-				
-				Open info window on click of marker:
-
+					
+				// Open info window on click of marker
 				google.maps.event.addListener(marker, 'click', function() {
 					infowindow.setContent(marker.title);
 					infowindow.open(map, marker);
 				});
-
-	*/
-}
+			}
 
 
 
 
-var request = new XMLHttpRequest();
-var my_info = "login=AMOS_HORN&lat="+lat+"&lng="+lon;
-request.open("POST", "https://defense-in-derpth.herokuapp.com/sendLocation", true);
-//Send the proper header information along with the request
-request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-request.send(my_info);
-request.onreadystatechange = PinsToMap;
-
-function PinsToMap () {	
-	elem = document.getElementById("messages");
-	if (request.readyState == 4 && request.status == 200) {
-		text_message = JSON.parse(request.responseText);
-		elem.innerHTML = "<h3>" + text_message[0]["content"]+"</h3><p> -"+ text_message[0]["username"]+"</p>"+ "<h3>" + text_message[1]["content"]+"</h3><p> -"+ text_message[1]["username"]+"</p>";
-	}
-	else if (request.readyState == 4 && request.status != 200) {
-
-		elem.innerHTML = "<p>Whoops, this means I'm going to fail this lab!</p>";
-	}
-};
-
-request.send(null); 
-
-
-
-
-function initMap() {
-	map = new google.maps.Map(document.getElementById('map'), {
-		center: {lat: -34.397, lng: 150.644},
-		zoom: 8
-	});
-}

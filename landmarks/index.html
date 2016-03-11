@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 
 <html>
-<head>
-	<title>Landmarks Around Me </title>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<script src="https://maps.google.com/maps/api/js?sensor=true" async defer></script>
-	<script src = "landmarks.js"></script>
-	<link rel="stylesheet" href="style.css" type="text/css" />
-</head>
 
-<body>
- <div id="map"></div>
-
-</body>
+	<head>
+		<title>LandMarks</title>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+		<link rel="stylesheet" href="style.css" />
+		
+		<script src = "landmarks.js"></script>
+	</head>
+	
+	<body onload="StartMap()">
+		<div id="landmark_map"></div>
+	</body>
 </html>
