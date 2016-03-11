@@ -1,44 +1,45 @@
 var MyLatitude = 0;
 var MyLongitude = 0;
-if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+var map;
+var request = new XMLHttpRequest
+
+function GetMyLocation(){
+	if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
 		navigator.geolocation.getCurrentPosition(function(position) {
-			MyLatitude = coords.latitude;
-			MyLongitude = coords.longitude;
+			MyLatitude = position.coords.latitude;
+			MyLongitude = position.coords.longitude;
+			Setup();
 			});
-		console.log("after if")
 	}else{
 		//do someting
 	}
-console.log("after loc")
-console.log(MyLatitude)
-var request = new XMLHttpRequest
-var my_info = "login=AMOS_HORN&lat="+MyLatitude+"&lng="+MyLongitude;
-request.open("POST", "https://defense-in-derpth.herokuapp.com/sendLocation", true);
+}
+function Setup(){
+	var my_info = "login=AMOS_HORN&lat="+MyLatitude+"&lng="+MyLongitude;
+	request.open("POST", "https://defense-in-derpth.herokuapp.com/sendLocation", true);
 
-//Send the proper header information along with the request
-request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	//Send the proper header information along with the request
+	request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-request.send(my_info); 
+	request.send(my_info); 
 
-var map;
-var my_location = new google.maps.LatLng(MyLatitude, MyLongitude);
-var marker;
-var infowindow = new google.maps.InfoWindow();
-var map_options = {
+	
+	
+	request.onreadystatechange = StartMap;
+}
+
+function StartMap(){
+	var my_location = new google.maps.LatLng(MyLatitude, MyLongitude);
+	var marker;
+	var infowindow = new google.maps.InfoWindow();
+	var map_options = {
 						zoom: 13, // The larger the zoom number, the bigger the zoom
 						center: my_location,
 						mapTypeId: google.maps.MapTypeId.ROADMAP
 
-					};
-StartMap();
-
-function StartMap(){
-		console.log("in the function")
-		map = new google.maps.Map(document.getElementById("landmark_map"), map_options);
-		DisplayMap();
-}
-function RetrieveMyLocation() {
-	
+						};
+	map = new google.maps.Map(document.getElementById("landmark_map"), map_options);
+	DisplayMap();
 }
 function DisplayMap(){
 	my_location = new google.maps.LatLng(MyLatitude,MyLongitude);
