@@ -44,10 +44,19 @@ function DisplayMap(){
 				// Update map and go there..
 	map.panTo(my_location);
 
+	var my_icon = {
+    url: "me.png", // url
+    scaledSize: new google.maps.Size(30, 30), // scaled size
+    origin: new google.maps.Point(0,0), // origin
+    anchor: new google.maps.Point(0, 0) // anchor
+	};
+
+
 	// Create a marker
 	marker = new google.maps.Marker({
 							position: my_location,
-							title: "You Found me!"
+							title: "You Found me!",
+							icon: my_icon
 							});
 	marker.setMap(map);
 
@@ -60,31 +69,46 @@ function DisplayMap(){
 }
 
 function OtherMarkers () {	
-		
+	var student_icon = {
+    url: "student.png", // url
+    scaledSize: new google.maps.Size(30, 30), // scaled size
+    origin: new google.maps.Point(0,0), // origin
+    anchor: new google.maps.Point(0, 0) // anchor
+	};
+	var monument_icon = {
+    url: "monument.png", // url
+    scaledSize: new google.maps.Size(30, 30), // scaled size
+    origin: new google.maps.Point(0,0), // origin
+    anchor: new google.maps.Point(0, 0) // anchor
+	};
+
+
+//console.log (" Landmark latitude: " + marker_data.landmarks[i].geometry.coordinates[1] + " landmark longitude: " + marker_data.landmarks[i].geometry.coordinates[0])
+
 	if (request.readyState == 4 && request.status == 200) {
 		marker_data = JSON.parse(request.responseText);
 		console.log(marker_data)
 		for (var i = 0; i < marker_data.people.length; i++) {
+			console.log (" people latitude: " + marker_data.people[i].lat + " people longitude: " + marker_data.people[i].lng)
 			locations = new google.maps.LatLng(marker_data.people[i].lat,marker_data.people[i].lng);
 			marker = new google.maps.Marker({
 							position: locations,
-							title: marker_data.people[i].login
+							title: marker_data.people[i].login,
+							icon: student_icon,
+							map: map
 							});
-			marker.setMap(map);
-			//TODO: set the image
 		}
-		console.log(marker_data.landmarks[2].properties.Details)
-		/*
+
 		for (var i = 0; i < marker_data.landmarks.length; i++) {
-			locations = new google.maps.LatLng(marker_data.landmarks[i].lat,marker_data.landmarks[i].lng);
+			locations = new google.maps.LatLng(marker_data.landmarks[i].geometry.coordinates[1],marker_data.landmarks[i].geometry.coordinates[0]);
 			marker = new google.maps.Marker({
 							position: locations,
-							title: marker_data.landmarks[i].login
+							title: marker_data.landmarks[i].properties.Location_Name,
+							icon: monument_icon,
+							map: map
+
 							});
-			marker.setMap(map);
-			//TODO: set the image
 		}
-		*/
 
 	}
 	else if (request.readyState == 4 && request.status != 200) {
