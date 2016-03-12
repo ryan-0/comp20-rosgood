@@ -1,3 +1,4 @@
+
 var MyLatitude = 0;
 var MyLongitude = 0;
 var map;
@@ -20,11 +21,7 @@ function Setup(){
 
 	//Send the proper header information along with the request
 	request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
 	request.send(my_info); 
-
-	
-	
 	request.onreadystatechange = StartMap;
 }
 
@@ -75,7 +72,20 @@ function OtherMarkers () {
 							});
 			marker.setMap(map);
 			//TODO: set the image
-		}	
+		}
+		console.log(marker_data.landmarks[2].properties.Details)
+		/*
+		for (var i = 0; i < marker_data.landmarks.length; i++) {
+			locations = new google.maps.LatLng(marker_data.landmarks[i].lat,marker_data.landmarks[i].lng);
+			marker = new google.maps.Marker({
+							position: locations,
+							title: marker_data.landmarks[i].login
+							});
+			marker.setMap(map);
+			//TODO: set the image
+		}
+		*/
+
 	}
 	else if (request.readyState == 4 && request.status != 200) {
 	}
