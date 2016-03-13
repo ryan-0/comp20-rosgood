@@ -39,10 +39,7 @@ function StartMap(){
 	DisplayMap();
 }
 function DisplayMap(){
-	my_location = new google.maps.LatLng(MyLatitude,MyLongitude);
-				
-				// Update map and go there..
-	map.panTo(my_location);
+	
 
 	var my_icon = {
     url: "me.png", // url
@@ -50,28 +47,7 @@ function DisplayMap(){
     origin: new google.maps.Point(0,0), // origin
     anchor: new google.maps.Point(0, 0) // anchor
 	};
-	// Create and place marker
-	marker = new google.maps.Marker({
-							position: my_location,
-							title: "You Found me!",
-							icon: my_icon, 
-							map: map,
-							content: "That's Me!"
-							});
-	//create an infowindow
-	var infowindow = new google.maps.InfoWindow();
-	marker.addListener('click', function(){
-		infowindow.setContent(this.content)
-		infowindow.open(map, this)
-	});
 
-	
-	OtherMarkers();
-
-}
-
-
-function OtherMarkers () {	
 	var student_icon = {
     	url: "student.png", // url
     	scaledSize: new google.maps.Size(30, 30), // scaled size
@@ -85,13 +61,28 @@ function OtherMarkers () {
     	anchor: new google.maps.Point(0, 0) // anchor
 	};
 
-//console.log (" Landmark latitude: " + marker_data.landmarks[i].geometry.coordinates[1] + " landmark longitude: " + marker_data.landmarks[i].geometry.coordinates[0])
+
+	my_location = new google.maps.LatLng(MyLatitude,MyLongitude);
+	var ClosestLandmark = {
+			distance: 1,
+			lat: 0,
+			lon: 0,
+			title: ""
+		}
+				
+				// Update map and go there..
+	map.panTo(my_location);
+
+
+	
+	
+
 	if (request.readyState == 4 && request.status == 200) {
 		marker_data = JSON.parse(request.responseText);
-		console.log(marker_data)
+		
 		var infowindow = new google.maps.InfoWindow();
 		for (var i = 0; i < marker_data.people.length; i++) {
-			console.log (" people latitude: " + marker_data.people[i].lat + " people longitude: " + marker_data.people[i].lng)
+	
 			if (marker_data.people[i].lat != MyLatitude && marker_data.people[i].lng != MyLongitude) {
 				locations = new google.maps.LatLng(marker_data.people[i].lat,marker_data.people[i].lng);
 				marker = new google.maps.Marker({
@@ -110,6 +101,17 @@ function OtherMarkers () {
 		}
 		for (var i = 0; i < marker_data.landmarks.length; i++) {
 			locations = new google.maps.LatLng(marker_data.landmarks[i].geometry.coordinates[1],marker_data.landmarks[i].geometry.coordinates[0]);
+			
+			//the following code finds the closest landmark to my location
+			var TempDistance;
+			TempDistance = Haversine(MyLatitude, MyLongitude, marker_data.landmarks[i].geometry.coordinates[1],marker_data.landmarks[i].geometry.coordinates[0]);
+			if (TempDistance < ClosestLandmark.distance) {
+				ClosestLandmark.distance = TempDistance;
+				ClosestLandmark.lat = marker_data.landmarks[i].geometry.coordinates[1]
+				ClosestLandmark.lon = marker_data.landmarks[i].geometry.coordinates[0]
+				ClosestLandmark.title = marker_data.landmarks[i].properties.Location_Name
+			}
+			
 			marker = new google.maps.Marker({
 							position: locations,
 							title: marker_data.landmarks[i].properties.Location_Name,
@@ -122,10 +124,41 @@ function OtherMarkers () {
     				infowindow.open(map, this);
   					});
 		}
+
+		// Create and place my marker
+		marker = new google.maps.Marker({
+							position: my_location,
+							title: "You Found me!",
+							icon: my_icon, 
+							map: map,
+							content: "That's Me!<br>" + "The closest landmark is <b> " + ClosestLandmark.title +"</b><br> and it's <b>"+ Math.round(ClosestLandmark.distance*100)/ 100 + "</b> miles away."
+							});
+			//create an infowindow
+		var infowindow = new google.maps.InfoWindow();
+		marker.addListener('click', function(){
+			infowindow.setContent(this.content)
+			infowindow.open(map, this)
+			});
+
+
+		var ClosestLandmarkPath = [
+    		{lat: MyLatitude, lng: MyLongitude},
+    		{lat: ClosestLandmark.lat, lng: ClosestLandmark.lon},
+  		];
+  		var ClosestLandmarkPolyline = new google.maps.Polyline({
+   		 	path: ClosestLandmarkPath,
+    		geodesic: true,
+    		strokeColor: '#FF0000',
+    		strokeOpacity: 1.0,
+   			strokeWeight: 2,
+   			map: map
+  		});
 	}
 	else if (request.readyState == 4 && request.status != 200) {
+		console.log("I'm Going to Fail this Assignment! Sorry Ming :(")
 	}
-};
+}
+
 
 //  the haversine function and helper function has been taking from stackoverflow at the following url:
 //  http://stackoverflow.com/questions/14560999/using-the-haversine-formula-in-javascript
@@ -148,7 +181,7 @@ function Haversine (lat1,lon1,lat2,lon2) {
 	                Math.sin(dLon/2) * Math.sin(dLon/2);  
 	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
 	var d = R * c; 
-	d /= 1.60934 // I added this to convert to Miles as the formula works for kilometers.
+	d /= 1.60934 // I added this to convert to miles as the formula works for kilometers.
 	return d;
 }
 
