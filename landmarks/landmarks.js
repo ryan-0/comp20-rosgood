@@ -28,7 +28,7 @@ function Setup(){
 function StartMap(){
 	var my_location = new google.maps.LatLng(MyLatitude, MyLongitude);
 	var marker;
-	var infowindow = new google.maps.InfoWindow();
+	
 	var map_options = {
 						zoom: 13, // The larger the zoom number, the bigger the zoom
 						center: my_location,
@@ -50,55 +50,68 @@ function DisplayMap(){
     origin: new google.maps.Point(0,0), // origin
     anchor: new google.maps.Point(0, 0) // anchor
 	};
-
-
-	// Create a marker
+	// Create and place marker
 	marker = new google.maps.Marker({
 							position: my_location,
 							title: "You Found me!",
-							icon: my_icon
+							icon: my_icon, 
+							map: map
 							});
-	marker.setMap(map);
-
-				// Open info window on click of marke
-	google.maps.event.addListener(marker, 'click', function() {
-		infowindow.setContent(marker.title);
-		infowindow.open(map, marker);
+	//create an infowindow
+	var ContentString = "hello there infowindow"
+	var infowindow = new google.maps.InfoWindow({
+		content: ContentString
+	})
+	marker.addListener('click', function(){
+		infowindow.open(map, this)
 	});
+
+	
 	OtherMarkers();
+
 }
+
 
 function OtherMarkers () {	
 	var student_icon = {
-    url: "student.png", // url
-    scaledSize: new google.maps.Size(30, 30), // scaled size
-    origin: new google.maps.Point(0,0), // origin
-    anchor: new google.maps.Point(0, 0) // anchor
+    	url: "student.png", // url
+    	scaledSize: new google.maps.Size(30, 30), // scaled size
+    	origin: new google.maps.Point(0,0), // origin
+    	anchor: new google.maps.Point(0, 0) // anchor
 	};
 	var monument_icon = {
-    url: "monument.png", // url
-    scaledSize: new google.maps.Size(30, 30), // scaled size
-    origin: new google.maps.Point(0,0), // origin
-    anchor: new google.maps.Point(0, 0) // anchor
+    	url: "monument.png", // url
+    	scaledSize: new google.maps.Size(30, 30), // scaled size
+    	origin: new google.maps.Point(0,0), // origin
+    	anchor: new google.maps.Point(0, 0) // anchor
 	};
 
-
 //console.log (" Landmark latitude: " + marker_data.landmarks[i].geometry.coordinates[1] + " landmark longitude: " + marker_data.landmarks[i].geometry.coordinates[0])
-
 	if (request.readyState == 4 && request.status == 200) {
 		marker_data = JSON.parse(request.responseText);
 		console.log(marker_data)
+		var Marker_Info = "hello, its me"
+		var infowindow = new google.maps.InfoWindow({
+			content: Marker_Info
+		});
 		for (var i = 0; i < marker_data.people.length; i++) {
 			console.log (" people latitude: " + marker_data.people[i].lat + " people longitude: " + marker_data.people[i].lng)
-			locations = new google.maps.LatLng(marker_data.people[i].lat,marker_data.people[i].lng);
-			marker = new google.maps.Marker({
+			if (marker_data.people[i].lat != MyLatitude && marker_data.people[i].lng != MyLongitude) {
+				locations = new google.maps.LatLng(marker_data.people[i].lat,marker_data.people[i].lng);
+				marker = new google.maps.Marker({
 							position: locations,
 							title: marker_data.people[i].login,
 							icon: student_icon,
 							map: map
 							});
-		}
+				marker.addListener('click', function() {
+					Marker_Info = marker_data.people[i].login;
+					infowindow.setContent(Marker_Info);
+    				infowindow.open(map, this);
+  					});
 
+			}	
+		}
 		for (var i = 0; i < marker_data.landmarks.length; i++) {
 			locations = new google.maps.LatLng(marker_data.landmarks[i].geometry.coordinates[1],marker_data.landmarks[i].geometry.coordinates[0]);
 			marker = new google.maps.Marker({
@@ -106,10 +119,20 @@ function OtherMarkers () {
 							title: marker_data.landmarks[i].properties.Location_Name,
 							icon: monument_icon,
 							map: map
-
 							});
+			marker.addListener('click', function() {
+    				infowindow.open(map, this);
+  					});
 		}
 
+		marker.addListener('click', function() {
+    			infowindow.open(map, this);
+  			});
+
+	
+		
+
+		
 	}
 	else if (request.readyState == 4 && request.status != 200) {
 	}
