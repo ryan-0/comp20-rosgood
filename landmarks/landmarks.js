@@ -105,8 +105,7 @@ function OtherMarkers () {
 							map: map
 							});
 				marker.addListener('click', function() {
-					Marker_Info = marker_data.people[i].login;
-					infowindow.setContent(Marker_Info);
+					infowindow.setContent(this.title);
     				infowindow.open(map, this);
   					});
 
