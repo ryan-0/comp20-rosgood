@@ -55,14 +55,13 @@ function DisplayMap(){
 							position: my_location,
 							title: "You Found me!",
 							icon: my_icon, 
-							map: map
+							map: map,
+							content: "That's Me!"
 							});
 	//create an infowindow
-	var ContentString = "hello there infowindow"
-	var infowindow = new google.maps.InfoWindow({
-		content: ContentString
-	})
+	var infowindow = new google.maps.InfoWindow();
 	marker.addListener('click', function(){
+		infowindow.setContent(this.content)
 		infowindow.open(map, this)
 	});
 
@@ -90,10 +89,7 @@ function OtherMarkers () {
 	if (request.readyState == 4 && request.status == 200) {
 		marker_data = JSON.parse(request.responseText);
 		console.log(marker_data)
-		var Marker_Info = "hello, its me"
-		var infowindow = new google.maps.InfoWindow({
-			content: Marker_Info
-		});
+		var infowindow = new google.maps.InfoWindow();
 		for (var i = 0; i < marker_data.people.length; i++) {
 			console.log (" people latitude: " + marker_data.people[i].lat + " people longitude: " + marker_data.people[i].lng)
 			if (marker_data.people[i].lat != MyLatitude && marker_data.people[i].lng != MyLongitude) {
@@ -102,10 +98,11 @@ function OtherMarkers () {
 							position: locations,
 							title: marker_data.people[i].login,
 							icon: student_icon,
-							map: map
+							map: map,
+							content:marker_data.people[i].login + " <br>Miles away: " + Math.round(Haversine(MyLatitude, MyLongitude, marker_data.people[i].lat,marker_data.people[i].lng) * 100) / 100
 							});
 				marker.addListener('click', function() {
-					infowindow.setContent(this.title);
+					infowindow.setContent(this.content);
     				infowindow.open(map, this);
   					});
 
@@ -117,25 +114,43 @@ function OtherMarkers () {
 							position: locations,
 							title: marker_data.landmarks[i].properties.Location_Name,
 							icon: monument_icon,
-							map: map
+							map: map,
+							content: marker_data.landmarks[i].properties.Details
 							});
 			marker.addListener('click', function() {
+					infowindow.setContent(this.content);	
     				infowindow.open(map, this);
   					});
 		}
-
-		marker.addListener('click', function() {
-    			infowindow.open(map, this);
-  			});
-
-	
-		
-
-		
 	}
 	else if (request.readyState == 4 && request.status != 200) {
 	}
 };
+
+//  the haversine function and helper function has been taking from stackoverflow at the following url:
+//  http://stackoverflow.com/questions/14560999/using-the-haversine-formula-in-javascript
+Number.prototype.toRad = function() {
+   return this * Math.PI / 180;
+}
+function Haversine (lat1,lon1,lat2,lon2) {
+	var lat2 = lat2; 
+	var lon2 = lon2; 
+	var lat1 = lat1; 
+	var lon1 = lon1; 
+
+	var R = 6371; // km 
+	var x1 = lat2-lat1;
+	var dLat = x1.toRad();  
+	var x2 = lon2-lon1;
+	var dLon = x2.toRad();  
+	var a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
+	              	 Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) * 
+	                Math.sin(dLon/2) * Math.sin(dLon/2);  
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+	var d = R * c; 
+	d /= 1.60934 // I added this to convert to Miles as the formula works for kilometers.
+	return d;
+}
 
 
 
