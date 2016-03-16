@@ -144,7 +144,15 @@ function PopulateMap(){
 			infowindow.setContent(this.content)
 			infowindow.open(map, this)
 			//this code is used to display the polyline between my location and the closest landmark.
-			var ClosestLandmarkPolyline = new google.maps.Polyline({
+			
+			});
+		//this sets the latitude and longitude of the closest landmark for the polyline.
+		var ClosestLandmarkPath = [
+    		{lat: MyLatitude, lng: MyLongitude},
+    		{lat: ClosestLandmark.lat, lng: ClosestLandmark.lon},
+  		];
+  		//this defines the polyline and makes it appear
+  		var ClosestLandmarkPolyline = new google.maps.Polyline({
    		 	path: ClosestLandmarkPath,
     		geodesic: true,
     		strokeColor: '#FF0000',
@@ -152,12 +160,6 @@ function PopulateMap(){
    			strokeWeight: 2,
    			map: map
   		});
-			});
-		//this sets the latitude and longitude of the closest landmark for the polyline.
-		var ClosestLandmarkPath = [
-    		{lat: MyLatitude, lng: MyLongitude},
-    		{lat: ClosestLandmark.lat, lng: ClosestLandmark.lon},
-  		];
   		
 	}
 	else if (request.readyState == 4 && request.status != 200) {
