@@ -143,15 +143,8 @@ function PopulateMap(){
 		marker.addListener('click', function(){
 			infowindow.setContent(this.content)
 			infowindow.open(map, this)
-			});
-
-
-		//this code is used to display the polyline between my location and the closest landmark.
-		var ClosestLandmarkPath = [
-    		{lat: MyLatitude, lng: MyLongitude},
-    		{lat: ClosestLandmark.lat, lng: ClosestLandmark.lon},
-  		];
-  		var ClosestLandmarkPolyline = new google.maps.Polyline({
+			//this code is used to display the polyline between my location and the closest landmark.
+			var ClosestLandmarkPolyline = new google.maps.Polyline({
    		 	path: ClosestLandmarkPath,
     		geodesic: true,
     		strokeColor: '#FF0000',
@@ -159,6 +152,13 @@ function PopulateMap(){
    			strokeWeight: 2,
    			map: map
   		});
+			});
+		//this sets the latitude and longitude of the closest landmark for the polyline.
+		var ClosestLandmarkPath = [
+    		{lat: MyLatitude, lng: MyLongitude},
+    		{lat: ClosestLandmark.lat, lng: ClosestLandmark.lon},
+  		];
+  		
 	}
 	else if (request.readyState == 4 && request.status != 200) {
 		console.log("I'm Going to Fail this Assignment! Sorry Ming :(")
@@ -190,8 +190,3 @@ function Haversine (lat1,lon1,lat2,lon2) {
 	d /= 1.60934 // I added this to convert to miles as the formula works for kilometers.
 	return d;
 }
-
-
-
-
-
