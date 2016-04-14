@@ -21,7 +21,7 @@ function GetMyLocation(){
 //This function sends my data to Ming's API and when the JSON is received back, it calls the StartMap function.
 function Setup(){
 	var my_info = "login=AMOS_HORN&lat="+MyLatitude+"&lng="+MyLongitude;
-	request.open("POST", "https://defense-in-derpth.herokuapp.com/sendLocation", true);
+	request.open("POST", "https://polar-dawn-55264.herokuapp.com/sendLocation", true);
 
 	//Send the proper header information along with the request
 	request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -33,7 +33,6 @@ function Setup(){
 //This function configures and create the map and displays it, it then calls the PopulateMap function to show markers
 function StartMap(){
 	var my_location = new google.maps.LatLng(MyLatitude, MyLongitude);
-	
 	var map_options = {
 						zoom: 15,
 						center: my_location,
@@ -78,8 +77,7 @@ function PopulateMap(){
 		}
 				
 	if (request.readyState == 4 && request.status == 200) {
-		marker_data = JSON.parse(request.responseText);
-		
+		marker_data = JSON.parse(request.responseText);		
 		var infowindow = new google.maps.InfoWindow();
 
 		//this for loop is used to position all the people markers on the map.
@@ -121,14 +119,13 @@ function PopulateMap(){
 							title: marker_data.landmarks[i].properties.Location_Name,
 							icon: monument_icon,
 							map: map,
-							content: marker_data.landmarks[i].properties.Details
+							content:marker_data.landmarks[i].properties.Details
 							});
 			marker.addListener('click', function() {
 					infowindow.setContent(this.content);	
     				infowindow.open(map, this);
   					});
 		}
-
 		// This code creates my marker and displays the relevant information on the infowindow.
 		my_location = new google.maps.LatLng(MyLatitude,MyLongitude);
 		marker = new google.maps.Marker({
