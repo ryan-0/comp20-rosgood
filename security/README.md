@@ -1,8 +1,8 @@
 # README 
 
 * I believe the entire work has been implemented correctly.
-* I have not worked on this with anyone.
-* I have spent 3 hours on this assignment. 
+* I have talked about this with Vincent Tsang and Ashton Knight
+* I have spent 5 hours on this assignment. 
 
 
 

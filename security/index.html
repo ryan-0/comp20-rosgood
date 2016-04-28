@@ -23,6 +23,7 @@ I started by doing "black-box" testing. I used their assignment 2 to get their h
 
 <h2>Abstract of Findings</h2>
 <hr>
+The main issues found in this product have to do with sanitizing user input, it seems like Ming Chow of Tufts University put it correctly: "never trust user input". Both the cross site scripting attack and the mongoDB attack were both due to user input being trusted and not being sanitized properly. A simple one line of code could have solved both of those very serious security issues, this shows that basic security can be very easily implemented. Finally, the last vulnerability which uses a bash script shows underlying problems with the code and the requirements from the client. For the code to be more secure, the server should have a list of pre-approved developers that can use the API and should limit the total amount of possible requests in a given amount of time. Overall, there are many issues with this code, but most of them can easily by fixed by sanitizing all user input from javascript, html, css, and other types of injections.
 
 <p></p>
 
@@ -36,14 +37,14 @@ I started by doing "black-box" testing. I used their assignment 2 to get their h
 <li>LOCATION: Accessed weakness using POST API, Affects Database and GET APIs </li> <br>
 <li>SEVERITY:<span id="high">HIGH</span>: this is the most obvious weakness and probably the easiest to detect, a typical case of why user input cannot be trusted. This vulnerability is a serious security issue for the Landmarks API as any website that might use this API might be compromised if malicious code was injected. However, it's very easy to fix the issue and it's possible to fix exposures retroactively. </li> <br>
 <li> DESCRIPTION & PROOF OF VULNERABILITY: The API relies on clients submitting their latitude, longitude and username. Whenever user input is necessary, an XSS weakness is possible if the data submitted (in this case via the POST API) is not sanitized, as seen in Josh's code below where data is set to user input with no sanitization: <br><br>
-<tr><td><id = "img"><img src="unsanitized-code.png" alt="pre-injection" title="Client site before injection" /></td> 
+<tr><td><id = "img"><img src="images/unsanitized-code.png" alt="pre-injection" title="Client site before injection" /></td> 
 <br><br>
 When the data is not sanitized HTML, CSS or, more importantly, JavaScript code can be injected into the API. This is the first thing I checked and a vulnerability was found as this code was successfully injected into the database and affected the client using the API:<xmp>curl --data "lat=42.4088478&lng=-71.1226377&login=<script>while(true){alert("sorry, you have been hacked.")}</script>" http://fast-river-52634.herokuapp.com/sendLocation         </xmp> as seen below: </li>
 <br><br>
 
-<tr><td><id = "img"><img src="pre-hack.png" alt="pre-injection" title="Client site before injection" /></td>  
+<tr><td><id = "img"><img src="images/pre-hack.png" alt="pre-injection" title="Client site before injection" /></td>  
 <br><br>
-<tr><td><id = "img"><img src="post-hack.png" alt="pre-injection" title="Client site after injection" /></td>  
+<tr><td><id = "img"><img src="images/post-hack.png" alt="pre-injection" title="Client site after injection" /></td>  
 <br><br>
 
 <li>RESOLUTION: The vulnerability can be fixed by sanitizing user input before it enters the database. For example, to make sure no JavaScript is injected, this code can replace all '<' and '>' with a greater than or lesser than symbol:<xmp>var safe_str = unsafe_str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");</xmp>. This same sanitizing can be applied retroactively using <code>db.collection.update()</code>within the mongo shell. Of course this code will only replace the '<' and '>', there are other characters that should be replaced such as '{' and "}" for a more secure product.</li>
@@ -57,15 +58,15 @@ When the data is not sanitized HTML, CSS or, more importantly, JavaScript code c
 <li>SEVERITY:<span id="high">HIGH</span>: this vulnerability will not impact all clients because you are not injecting nefarious code into the database.However, it's a major privacy issue where an attacker could easily view and possibly download all data within a MongoDB collection and therefore retrieve sensitive information like passwords, bank accounts,etc. Luckily, in the case of this API none of the information in the checkins database is very sensitive </li><br>
 <li> DESCRIPTION & PROOF OF VULNERABILITY: The API provides a GET request where a URL can be accessed with a specific login name as a query to retrieve data about that login. For instance, by doing: <br><xmp>curl http://fast-river-52634.herokuapp.com/checkins.json?login=mchowD</xmp><br> all checkin information available about user mchowD will be retrieved in a JSON format as seen below:
 <br><br>
-<tr><td><id = "img"><img src="mchowD.png" alt="pre-injection" title="data returned pre injection" /><br><br></td>  
+<tr><td><id = "img"><img src="images/mchowD.png" alt="pre-injection" title="data returned pre injection" /><br><br></td>  
 
  However, all other data in the collection can be accessed by specifiying all logins NOT EQUAL to the specified login. The following curl comand returns all objects in the collection that do not have an mchowD login:<br><xmp>curl http://fast-river-52634.herokuapp.com/checkins.json?login[$ne]=mchowD</xmp>
  <br><br> 
- <tr><td><id = "img"><img src="attack.png" alt="post-injection" title="data returned post-injection" /></td>  
+ <tr><td><id = "img"><img src="images/attack.png" alt="post-injection" title="data returned post-injection" /></td>  
 
  <br><br>
  This code clearly returns in the same JSON format all data whose username is not mchowD, thereby exposing all information in the collection, a major privacy issue. The problem here is that Terry is not sanitizing the query at all as seen in his code:</li><br>
- <td><id = "img"><img src="bad_code.png" alt="post-injection" title="data returned post-injection" /></td> 
+ <td><id = "img"><img src="images/bad_code.png" alt="post-injection" title="data returned post-injection" /></td> 
 
 <li>RESOLUTION: The vulnerability can also be fixed by sanitizing the URL query that the user inputs. This can be done by replacing all '[' and ']' and '$' with different characters that will make the injection impossible:<xmp>var safe_query = unsafe_query.replace(/[/g, "bracket").replace(/]/g, "bracket").replace(/$/g, "dollar");</xmp> Other dangerous characters can also be replaced to make this GET request even more secure. </li>
 <li><p><strong>Server Overloading</strong></p>
@@ -74,9 +75,9 @@ When the data is not sanitized HTML, CSS or, more importantly, JavaScript code c
 <li>LOCATION: Accessed weakness using POST API, affects Database</li><br>
 <li>SEVERITY:<span id="medium">MEDIUM</span>: This a pretty signigicant problem as it affects the database and can easily compromise the usability of the API. However, it may be fixed retroactively by deleting documents in the collection.</li><br>
 <li>DESCRIPTION & PROOF OF VULNERABILITY: One of the simple ways of compromising this API does not even take advantage of a specific coding weakness. By simply overloading the server with junk data using a bash script, it becomes possible to either render the API useless by filling up all available storage in the database, or by adding thousands of junk "checkins" that would simply make the API unusable. I used the following bash script to do this: <br> <br>
-<tr><td><id = "img"><img src="bash.png" alt="bash" title="bash script" /></td> <br> <br>
+<tr><td><id = "img"><img src="images/bash.png" alt="bash" title="bash script" /></td> <br> <br>
 When running the bash script, I got the following response: <br><br>
-<tr><td><id = "img"><img src="bash_hack.png" alt="bash response" title="bash response" /></td> <br>
+<tr><td><id = "img"><img src="images/bash_hack.png" alt="bash response" title="bash response" /></td> <br>
 </li><br>
 
 <li><p>RESOLUTION: Because this vulnerability has to do with bad coding practice,there are a few recommendations to make that would solve this problem.The first recommendation is to put a limit on the total number of requests a specific username or IP adress can make in a day. The other recommendation would be to have a certain list of developers that are allowed to use the API, and make sure they are using it with valid intentions. This could be done by using API keys for instance. Right now, anyone can use the API and put a new username in the database, which is a huge security issue.</p>
@@ -87,6 +88,8 @@ When running the bash script, I got the following response: <br><br>
 
 <h2>Conclusion</h2>
 <hr>
+Overall, it was quite easy to find problems with this product. It is recommended that Josh Terry spends more time looking over the security of his product by implementing very simple input sanitization on all possible user input, both in POST and GET requests. This product also shows that more time should be spent designing the API as, by design, this API is not very secure. It allows anyone with any login to post data and use the API, which is a major problem. Additionally, because this API retrieves and sends user locations, there are also a lot of privacy issues Josh Terry should look at such as assigning fake user_names to people to preserve their privacy. Additionally, Josh should be extra cautious with vulnerabilities that allow for full retrieval of information from the database. Overall, Josh could spend an extra hour and make his product much more secure to potential attacks.
+
 
 <p></a></p>
 </body>
